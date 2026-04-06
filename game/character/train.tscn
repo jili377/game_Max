@@ -3062,8 +3062,8 @@ metadata/_edit_vertical_guides_ = [989.0]
 position = Vector2(960, 540)
 sprite_frames = SubResource("SpriteFrames_wcval")
 animation = &"yugurei"
-frame = 402
-frame_progress = 0.3488184
+frame = 4
+frame_progress = 0.98967755
 speed_scale = 2.0
 script = ExtResource("764_esqf0")
 
