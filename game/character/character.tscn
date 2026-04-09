@@ -705,7 +705,7 @@ position = Vector2(287, 147)
 scale = Vector2(0.27, 0.27)
 sprite_frames = SubResource("SpriteFrames_qtq44")
 animation = &"ECG"
-frame_progress = 0.57608265
+frame_progress = 0.2975628
 speed_scale = 8.0
 
 [node name="object" type="Sprite2D" parent="." unique_id=1907352345]
