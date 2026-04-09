@@ -1,48 +1,117 @@
 extends CharacterBody2D
 
-@export var speed = 90
-@export var run_speed = 180
+@export var speed: float = 90.0
+@export var run_speed: float = 180.0
 
-# 🎯 阴影参数（可以在 Inspector 里调！）
-@export var shadow_offset = Vector2(0, 12)
-@export var shadow_scale_idle = Vector2(0.35, 0.2)
-@export var shadow_scale_run = Vector2(0.5, 0.1)
-@export var shadow_follow_speed = 0.2
+# ===== 耐力 =====
+var max_stamina: float = 100.0
+var stamina: float = 100.0
+
+var drain_rate: float = 12.5
+var recover_rate: float = 18
+
+var is_running := false
+
+# ===== 平滑速度 =====
+var current_speed: float = 0.0
+var target_speed: float = 0.0
+
+# 🎯 真实跑步状态（迟滞）
+var is_actually_running := false
 
 @onready var anim = $AnimatedSprite2D
-@onready var shadow = $Shadow
+@onready var shadow = $Shadow   # 不控制
 
 var last_direction = Vector2.DOWN
 
 
+func _ready():
+	current_speed = speed
+
+
 func _physics_process(delta):
+
 	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var is_running = Input.is_action_pressed("run")
+	var want_run = Input.is_action_pressed("run")
 
-	# 🟢 移动
+	# =========================
+	# 💥 输入 → 目标速度
+	# =========================
+	is_running = want_run and stamina > 0.0 and direction != Vector2.ZERO
+
 	if is_running:
-		velocity = direction * run_speed
+		target_speed = run_speed
 	else:
-		velocity = direction * speed
+		target_speed = speed
 
+	# 💥 体力影响速度
+	var stamina_ratio = stamina / max_stamina
+	target_speed *= pow(stamina_ratio, 1.3) + 0.3
+
+	# =========================
+	# 💥 平滑速度
+	# =========================
+	current_speed = lerp(current_speed, target_speed, 5.0 * delta)
+
+	# =========================
+	# 🟢 移动
+	# =========================
+	velocity = direction * current_speed
 	move_and_slide()
 
+	# =========================
+	# 🎯 run_blend
+	# =========================
+	var run_blend = current_speed / run_speed
+	run_blend = clamp(run_blend, 0.0, 1.0)
+
+	# =========================
+	# 🔥 迟滞（防抖动）
+	# =========================
+	var enter_threshold = 0.75
+	var exit_threshold = 0.55
+
+	if is_actually_running:
+		if run_blend < exit_threshold:
+			is_actually_running = false
+	else:
+		if run_blend > enter_threshold:
+			is_actually_running = true
+
+	# =========================
+	# 💥 耐力变化
+	# =========================
+	if is_actually_running:
+		stamina -= drain_rate * delta
+	else:
+		stamina += recover_rate * delta
+
+	stamina = clamp(stamina, 0.0, max_stamina)
+
+	# =========================
 	# 🟢 动画
+	# =========================
 	if direction != Vector2.ZERO:
 		last_direction = direction
-		
-		if is_running:
+
+		if is_actually_running:
 			play_directional_animation(direction, "run")
 		else:
 			play_directional_animation(direction, "walk")
+
+		# 🎯 动画速度 = 跟随真实移动速度（🔥关键）
+		var speed_ratio = current_speed / run_speed
+		speed_ratio = clamp(speed_ratio, 0.0, 1.0)
+
+		# 最低0.6（拖步） → 最高2.0（冲刺）
+		anim.speed_scale = lerp(0.6, 2.0, speed_ratio)
+
 	else:
 		play_directional_animation(last_direction, "idle")
-
-	# 🟢 阴影更新
-	update_shadow(delta)
+		anim.speed_scale = 1.0
 
 
-# 🎬 方向动画系统
+# 🎬 动画系统
 func play_directional_animation(dir, type):
 	var angle = dir.angle()
 	var index = int(round(angle / (PI / 4)))
@@ -67,44 +136,3 @@ func play_directional_animation(dir, type):
 
 	if anim.animation != anim_name:
 		anim.play(anim_name)
-
-
-func update_shadow(_delta):
-	var frame = anim.frame
-	var anim_name = anim.animation
-
-	var base_scale = shadow_scale_idle
-	var target_scale = base_scale
-
-	# 🟢 不同动画不同节奏
-	if anim_name.begins_with("walk") or anim_name.begins_with("run"):
-		
-		# 👉 根据帧做变化（关键）
-		match frame % 4:
-			0:
-				target_scale = base_scale * Vector2(1.0, 1.0)
-			1:
-				target_scale = base_scale * Vector2(1.1, 0.9)
-			2:
-				target_scale = base_scale * Vector2(0.95, 1.05)
-			3:
-				target_scale = base_scale * Vector2(1.05, 0.95)
-
-	else:
-		# 🫁 待机轻微呼吸（可选）
-		var t = Time.get_ticks_msec() * 0.003
-		var breathe = sin(t) * 0.03
-		target_scale = base_scale + Vector2(breathe, breathe * 0.5)
-
-	# 🟢 应用缩放（不要太平滑！否则会糊）
-	shadow.scale = shadow.scale.lerp(target_scale, 0.3)
-
-	# 🟢 位置（保持脚下）
-	var target_pos = shadow_offset
-
-	if velocity != Vector2.ZERO:
-		var dir = velocity.normalized()
-		target_pos.x += dir.x * 2
-		target_pos.y += dir.y * 1.5
-
-	shadow.position = shadow.position.lerp(target_pos, 0.2)

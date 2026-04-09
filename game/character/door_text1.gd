@@ -120,7 +120,7 @@ func get_pause_time(text):
 func ending_sequence():
 	await get_tree().create_timer(2.5).timeout
 	
-	get_tree().change_scene_to_file("res://door.tscn")
+	#get_tree().change_scene_to_file("res://door.tscn")
 
 
 # =========================
