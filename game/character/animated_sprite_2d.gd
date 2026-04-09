@@ -16,11 +16,14 @@ var is_running := false
 var current_speed: float = 0.0
 var target_speed: float = 0.0
 
-# 🎯 真实跑步状态（迟滞）
 var is_actually_running := false
 
+# ===== 拾取 =====
+var current_item = null
+
 @onready var anim = $AnimatedSprite2D
-@onready var shadow = $Shadow   # 不控制
+@onready var shadow = $Shadow
+@onready var pickup_area = $PickupArea
 
 var last_direction = Vector2.DOWN
 
@@ -28,46 +31,32 @@ var last_direction = Vector2.DOWN
 func _ready():
 	current_speed = speed
 
+	# 连接拾取检测
+	pickup_area.area_entered.connect(_on_area_entered)
+	pickup_area.area_exited.connect(_on_area_exited)
+
 
 func _physics_process(delta):
 
 	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var want_run = Input.is_action_pressed("run")
 
-	# =========================
-	# 💥 输入 → 目标速度
-	# =========================
+	# ===== 移动逻辑 =====
 	is_running = want_run and stamina > 0.0 and direction != Vector2.ZERO
 
-	if is_running:
-		target_speed = run_speed
-	else:
-		target_speed = speed
+	target_speed = run_speed if is_running else speed
 
-	# 💥 体力影响速度
 	var stamina_ratio = stamina / max_stamina
 	target_speed *= pow(stamina_ratio, 1.3) + 0.3
 
-	# =========================
-	# 💥 平滑速度
-	# =========================
 	current_speed = lerp(current_speed, target_speed, 5.0 * delta)
 
-	# =========================
-	# 🟢 移动
-	# =========================
 	velocity = direction * current_speed
 	move_and_slide()
 
-	# =========================
-	# 🎯 run_blend
-	# =========================
-	var run_blend = current_speed / run_speed
-	run_blend = clamp(run_blend, 0.0, 1.0)
+	# ===== 跑步状态 =====
+	var run_blend = clamp(current_speed / run_speed, 0.0, 1.0)
 
-	# =========================
-	# 🔥 迟滞（防抖动）
-	# =========================
 	var enter_threshold = 0.75
 	var exit_threshold = 0.55
 
@@ -78,9 +67,7 @@ func _physics_process(delta):
 		if run_blend > enter_threshold:
 			is_actually_running = true
 
-	# =========================
-	# 💥 耐力变化
-	# =========================
+	# ===== 耐力 =====
 	if is_actually_running:
 		stamina -= drain_rate * delta
 	else:
@@ -88,9 +75,7 @@ func _physics_process(delta):
 
 	stamina = clamp(stamina, 0.0, max_stamina)
 
-	# =========================
-	# 🟢 动画
-	# =========================
+	# ===== 动画 =====
 	if direction != Vector2.ZERO:
 		last_direction = direction
 
@@ -99,19 +84,28 @@ func _physics_process(delta):
 		else:
 			play_directional_animation(direction, "walk")
 
-		# 🎯 动画速度 = 跟随真实移动速度（🔥关键）
-		var speed_ratio = current_speed / run_speed
-		speed_ratio = clamp(speed_ratio, 0.0, 1.0)
-
-		# 最低0.6（拖步） → 最高2.0（冲刺）
+		var speed_ratio = clamp(current_speed / run_speed, 0.0, 1.0)
 		anim.speed_scale = lerp(0.6, 2.0, speed_ratio)
-
 	else:
 		play_directional_animation(last_direction, "idle")
 		anim.speed_scale = 1.0
 
+	# ===== 拾取 =====
+	if Input.is_action_just_pressed("interact") and current_item:
+		current_item.pickup()
 
-# 🎬 动画系统
+
+# ===== 检测 =====
+func _on_area_entered(area):
+	current_item = area
+
+
+func _on_area_exited(area):
+	if area == current_item:
+		current_item = null
+
+
+# ===== 动画系统 =====
 func play_directional_animation(dir, type):
 	var angle = dir.angle()
 	var index = int(round(angle / (PI / 4)))

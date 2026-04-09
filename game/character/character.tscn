@@ -150,6 +150,9 @@
 [ext_resource type="Texture2D" uid="uid://dao3jjsr5lrlx" path="res://heart_dia/heart_00088.png" id="148_yer46"]
 [ext_resource type="Texture2D" uid="uid://bxtf44be4lqmh" path="res://heart_dia/pika_nos_in_tiles01_B.png" id="149_fdi8c"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2mi4e"]
+size = Vector2(296, 309)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_xvb2f"]
 animations = [{
 "frames": [{
@@ -685,6 +688,12 @@ size = Vector2(81, 139)
 position = Vector2(-4, -5)
 script = ExtResource("16_jx0ln")
 
+[node name="PickupArea" type="Area2D" parent="CharacterBody2D" unique_id=2044091958]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D/PickupArea" unique_id=1062432109]
+position = Vector2(15, 29.5)
+shape = SubResource("RectangleShape2D_2mi4e")
+
 [node name="Shadow" type="Sprite2D" parent="CharacterBody2D" unique_id=551414406]
 modulate = Color(1, 1, 1, 0.39607844)
 position = Vector2(4, 151.575)
@@ -708,12 +717,12 @@ position = Vector2(287, 147)
 scale = Vector2(0.27, 0.27)
 sprite_frames = SubResource("SpriteFrames_qtq44")
 animation = &"ECG"
-frame_progress = 0.239808
+frame_progress = 0.4039006
 speed_scale = 8.0
 
-[node name="Area2D" type="Area2D" parent="." unique_id=2063933010]
+[node name="Item_Area2D" type="Area2D" parent="." unique_id=2063933010 groups=["item"]]
 
-[node name="object" type="Sprite2D" parent="Area2D" unique_id=1907352345]
+[node name="pickup" type="Sprite2D" parent="Item_Area2D" unique_id=1907352345]
 position = Vector2(1119, 562)
 scale = Vector2(3.35, 3.35)
 texture = ExtResource("149_fdi8c")
@@ -721,6 +730,6 @@ offset = Vector2(0, 13.94)
 region_enabled = true
 region_rect = Rect2(153.4587, 46.346504, 32.712753, 50.13125)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=490204251]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Item_Area2D" unique_id=490204251]
 position = Vector2(1118.5, 607.5)
 shape = SubResource("RectangleShape2D_fdi8c")
