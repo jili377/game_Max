@@ -717,7 +717,9 @@ position = Vector2(287, 147)
 scale = Vector2(0.27, 0.27)
 sprite_frames = SubResource("SpriteFrames_qtq44")
 animation = &"ECG"
-frame_progress = 0.4039006
+autoplay = "ECG"
+frame = 88
+frame_progress = 1.0
 speed_scale = 8.0
 
 [node name="Item_Area2D" type="Area2D" parent="." unique_id=2063933010 groups=["item"]]
@@ -733,3 +735,5 @@ region_rect = Rect2(153.4587, 46.346504, 32.712753, 50.13125)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Item_Area2D" unique_id=490204251]
 position = Vector2(1118.5, 607.5)
 shape = SubResource("RectangleShape2D_fdi8c")
+
+[connection signal="area_entered" from="CharacterBody2D/PickupArea" to="CharacterBody2D" method="_on_pickup_area_area_entered"]

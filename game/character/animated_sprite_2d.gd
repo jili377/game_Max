@@ -32,7 +32,6 @@ func _ready():
 	current_speed = speed
 
 	# 连接拾取检测
-	pickup_area.area_entered.connect(_on_area_entered)
 	pickup_area.area_exited.connect(_on_area_exited)
 
 
@@ -92,13 +91,17 @@ func _physics_process(delta):
 
 	# ===== 拾取 =====
 	if Input.is_action_just_pressed("interact") and current_item:
+		print(current_item)
 		current_item.pickup()
-
-
+		print()
+		print()
+	
 # ===== 检测 =====
-func _on_area_entered(area):
+	
+func _on_pickup_area_area_entered(area: Area2D) -> void:
 	current_item = area
-
+	print("test")
+	print(current_item)
 
 func _on_area_exited(area):
 	if area == current_item:
