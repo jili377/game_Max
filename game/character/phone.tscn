@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://drb4om4dgjhr3"]
+
+[ext_resource type="Texture2D" uid="uid://d0gf58xfqvv6i" path="res://IDLE_Anim/phone_re.png" id="1_3rj5o"]
+[ext_resource type="Texture2D" uid="uid://b02pk0g8607gt" path="res://addons/memo.png" id="2_0e3g3"]
+[ext_resource type="Texture2D" uid="uid://deqt72m8jq1c" path="res://addons/guide.png" id="3_0e3g3"]
+[ext_resource type="Texture2D" uid="uid://c7wjg8ewvv123" path="res://addons/message.png" id="4_idgle"]
+[ext_resource type="Texture2D" uid="uid://7slb14luv757" path="res://addons/save.png" id="5_vuhsr"]
+[ext_resource type="Texture2D" uid="uid://cxyolghu6ibnq" path="res://addons/map.png" id="6_th6ti"]
+[ext_resource type="Texture2D" uid="uid://cfk7mjuwmem73" path="res://addons/load.png" id="7_vsimv"]
+[ext_resource type="Texture2D" uid="uid://ckw7i17k3lx3f" path="res://text_rere.png" id="8_vuhsr"]
+
+[node name="phone_ui" type="Node2D" unique_id=1222690220]
+position = Vector2(1288, 0)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=890815912]
+
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=1023277098]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1288.0
+offset_right = 1907.0
+offset_bottom = 1084.0
+metadata/_edit_use_anchors_ = true
+
+[node name="PhoneBackground" type="TextureRect" parent="CanvasLayer/Control" unique_id=61674161]
+layout_mode = 0
+offset_right = 623.0
+offset_bottom = 1077.0
+texture = ExtResource("1_3rj5o")
+metadata/_edit_use_anchors_ = true
+
+[node name="memo" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=254209304]
+clip_contents = true
+layout_mode = 0
+offset_right = 631.0
+offset_bottom = 1085.0
+icon = ExtResource("2_0e3g3")
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="guide" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=671897966]
+layout_mode = 0
+offset_right = 631.0
+offset_bottom = 1085.0
+icon = ExtResource("3_0e3g3")
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="message" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=114482903]
+layout_mode = 0
+offset_right = 631.0
+offset_bottom = 1085.0
+icon = ExtResource("4_idgle")
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="save" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=1424455175]
+layout_mode = 0
+offset_right = 631.0
+offset_bottom = 1085.0
+icon = ExtResource("5_vuhsr")
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="map" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=304700926]
+layout_mode = 0
+offset_right = 631.0
+offset_bottom = 1085.0
+icon = ExtResource("6_th6ti")
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="load" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=1632425112]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.011000001
+anchor_right = -0.011000001
+offset_left = 6.8530006
+offset_right = 760.853
+offset_bottom = 1085.0
+icon = ExtResource("7_vsimv")
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/PhoneBackground" unique_id=1546888494]
+layout_mode = 0
+offset_right = 623.0
+offset_bottom = 1077.0
+texture = ExtResource("8_vuhsr")
+metadata/_edit_use_anchors_ = true

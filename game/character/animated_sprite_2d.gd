@@ -15,24 +15,43 @@ var is_running := false
 # ===== 平滑速度 =====
 var current_speed: float = 0.0
 var target_speed: float = 0.0
-
 var is_actually_running := false
 
 # ===== 拾取 =====
-var current_item = null
+var current_item: Area2D = null
 
-@onready var anim = $AnimatedSprite2D
-@onready var shadow = $Shadow
-@onready var pickup_area = $PickupArea
+# ===== UI 图标 =====
+@onready var pickup_icon: Sprite2D = $PickupIcon
+var icon_base_pos := Vector2.ZERO
+var icon_base_scale := Vector2.ONE
+var icon_time := 0.0
+var icon_tween: Tween
+
+@onready var anim: AnimatedSprite2D = $AnimatedSprite2D
+@onready var pickup_area: Area2D = $PickupArea
+
+# ===== 🔦 手电筒 =====
+@onready var flashlight: Sprite2D = $Flashlight
+var flashlight_on := true
+var flashlight_base_scale := Vector2.ONE
 
 var last_direction = Vector2.DOWN
 
 
 func _ready():
 	current_speed = speed
-
-	# 连接拾取检测
-	pickup_area.area_exited.connect(_on_area_exited)
+	
+	pickup_icon.visible = false
+	
+	# 记录编辑器设置（防止运行错位）
+	icon_base_pos = pickup_icon.position
+	icon_base_scale = pickup_icon.scale
+	
+	flashlight.visible = flashlight_on
+	flashlight_base_scale = flashlight.scale
+	
+	pickup_area.area_entered.connect(_on_pickup_area_area_entered)
+	pickup_area.area_exited.connect(_on_pickup_area_area_exited)
 
 
 func _physics_process(delta):
@@ -40,30 +59,25 @@ func _physics_process(delta):
 	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var want_run = Input.is_action_pressed("run")
 
-	# ===== 移动逻辑 =====
+	# ===== 移动 =====
 	is_running = want_run and stamina > 0.0 and direction != Vector2.ZERO
-
 	target_speed = run_speed if is_running else speed
 
 	var stamina_ratio = stamina / max_stamina
 	target_speed *= pow(stamina_ratio, 1.3) + 0.3
 
 	current_speed = lerp(current_speed, target_speed, 5.0 * delta)
-
 	velocity = direction * current_speed
 	move_and_slide()
 
-	# ===== 跑步状态 =====
+	# ===== 跑步判断 =====
 	var run_blend = clamp(current_speed / run_speed, 0.0, 1.0)
 
-	var enter_threshold = 0.75
-	var exit_threshold = 0.55
-
 	if is_actually_running:
-		if run_blend < exit_threshold:
+		if run_blend < 0.55:
 			is_actually_running = false
 	else:
-		if run_blend > enter_threshold:
+		if run_blend > 0.75:
 			is_actually_running = true
 
 	# ===== 耐力 =====
@@ -91,45 +105,124 @@ func _physics_process(delta):
 
 	# ===== 拾取 =====
 	if Input.is_action_just_pressed("interact") and current_item:
-		print(current_item)
+		print("拾取:", current_item)
 		current_item.pickup()
-		print()
-		print()
-	
-# ===== 检测 =====
-	
+
+
+# ===== 🎨 手绘抖动动画 =====
+func _process(delta):
+	if pickup_icon.visible:
+		icon_time += delta
+		
+		var float_y = sin(icon_time * 2.5) * 2.5
+		var jitter_x = sin(icon_time * 3.7) * 1.2
+		var jitter_y = cos(icon_time * 4.3) * 1.0
+		
+		var rot = sin(icon_time * 3.0) * 0.05
+		var s = 1.0 + sin(icon_time * 5.0) * 0.03
+		
+		pickup_icon.position = icon_base_pos + Vector2(jitter_x, float_y + jitter_y)
+		pickup_icon.rotation = rot
+		pickup_icon.scale = icon_base_scale * s
+
+	# 🔦 手电筒（每帧更新）
+	update_flashlight(delta)
+	toggle_flashlight()
+
+
+# ===== 🔦 手电筒 =====
+
+func update_flashlight(_delta):
+	if !flashlight_on:
+		return
+
+	# 👉 跟8方向（核心）
+	flashlight.rotation = last_direction.angle()
+
+	# ✨ 闪烁（轻微呼吸感）
+	var t = Time.get_ticks_msec() / 1000.0
+	var flicker = 1.0 + sin(t * 8.0) * 0.02
+
+	flashlight.scale = flashlight_base_scale * flicker
+
+
+func toggle_flashlight():
+	if Input.is_action_just_pressed("flashlight_toggle"):
+		flashlight_on = !flashlight_on
+		flashlight.visible = flashlight_on
+
+
+# ===== 拾取检测 =====
+
 func _on_pickup_area_area_entered(area: Area2D) -> void:
 	current_item = area
-	print("test")
-	print(current_item)
+	
+	pickup_icon.visible = true
+	icon_time = 0.0
+	
+	if icon_tween:
+		icon_tween.kill()
+	
+	icon_tween = create_tween()
+	
+	pickup_icon.scale = icon_base_scale * 0.3
+	pickup_icon.modulate.a = 0.0
+	
+	icon_tween.tween_property(pickup_icon, "scale", icon_base_scale * 1.4, 0.12)\
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	
+	icon_tween.tween_property(pickup_icon, "scale", icon_base_scale * 0.9, 0.10)
+	icon_tween.tween_property(pickup_icon, "scale", icon_base_scale, 0.08)
+	
+	icon_tween.parallel().tween_property(pickup_icon, "modulate:a", 1.0, 0.15)
 
-func _on_area_exited(area):
+
+func _on_pickup_area_area_exited(area: Area2D) -> void:
 	if area == current_item:
 		current_item = null
+		
+		if icon_tween:
+			icon_tween.kill()
+		
+		icon_tween = create_tween()
+		
+		icon_tween.tween_property(pickup_icon, "scale", icon_base_scale * 0.2, 0.12)\
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		
+		icon_tween.parallel().tween_property(pickup_icon, "modulate:a", 0.0, 0.1)
+		
+		icon_tween.tween_callback(func():
+			pickup_icon.visible = false
+			pickup_icon.scale = icon_base_scale
+		)
 
 
 # ===== 动画系统 =====
-func play_directional_animation(dir, type):
+
+func play_directional_animation(dir: Vector2, type: String):
+
 	var angle = dir.angle()
 	var index = int(round(angle / (PI / 4)))
 	index = wrapi(index, 0, 8)
 
 	var directions = [
-		"right",
-		"down_right",
-		"down",
-		"down_right",
-		"right",
-		"up_right",
-		"up",
-		"up_right"
+		"right","down_right","down","down_left",
+		"left","up_left","up","up_right"
 	]
 
 	var base_anim = directions[index]
-	var anim_name = type + "_" + base_anim
 
-	var flip = index in [3, 4, 5]
-	anim.flip_h = flip
+	var use_anim = base_anim
+	if base_anim == "left":
+		use_anim = "right"
+	elif base_anim == "down_left":
+		use_anim = "down_right"
+	elif base_anim == "up_left":
+		use_anim = "up_right"
+
+	var anim_name = type + "_" + use_anim
+
+	anim.flip_h = base_anim in ["left", "down_left", "up_left"]
 
 	if anim.animation != anim_name:
 		anim.play(anim_name)

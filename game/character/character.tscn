@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dyw5ahj4bfmja" path="res://IDLE_Anim/Idle_01.png" id="1_sm1rv"]
 [ext_resource type="Texture2D" uid="uid://djsdc1p24b0gu" path="res://shadow1.png" id="2_i6hxo"]
 [ext_resource type="Texture2D" uid="uid://bktfq8n6kyun5" path="res://IDLE_Anim/Idle_02.png" id="2_jx0ln"]
+[ext_resource type="Texture2D" uid="uid://b3g4pdld0wsng" path="res://train1/ff.png" id="2_vviuh"]
 [ext_resource type="Texture2D" uid="uid://cfr4v7j8cyeut" path="res://IDLE_Anim/Idle_03.png" id="3_lpiy1"]
 [ext_resource type="Texture2D" uid="uid://cpiluhr3h3fqg" path="res://IDLE_Anim/Idle_04.png" id="4_88tkl"]
 [ext_resource type="Texture2D" uid="uid://blmo1m6ra1egv" path="res://IDLE_Anim/Idle_13.png" id="5_jx0ln"]
@@ -148,7 +149,12 @@
 [ext_resource type="Texture2D" uid="uid://dypfvmc4asiv0" path="res://heart_dia/heart_00086.png" id="146_ohimo"]
 [ext_resource type="Texture2D" uid="uid://dfwlhnifg0mtn" path="res://heart_dia/heart_00087.png" id="147_a6hkt"]
 [ext_resource type="Texture2D" uid="uid://dao3jjsr5lrlx" path="res://heart_dia/heart_00088.png" id="148_yer46"]
+[ext_resource type="Script" uid="uid://c1wgyn2fhycel" path="res://item.gd" id="149_2mi4e"]
 [ext_resource type="Texture2D" uid="uid://bxtf44be4lqmh" path="res://heart_dia/pika_nos_in_tiles01_B.png" id="149_fdi8c"]
+[ext_resource type="Texture2D" uid="uid://bjaerrb4gesnh" path="res://train1/train_ding/door_zhen/07びっくり.png" id="151_tr5de"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_s6imn"]
+blend_mode = 1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2mi4e"]
 size = Vector2(296, 309)
@@ -680,13 +686,31 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fdi8c"]
-size = Vector2(81, 139)
+size = Vector2(126, 179)
 
-[node name="Node2D" type="Node2D" unique_id=1723775008]
+[node name="Game" type="Node2D" unique_id=1723775008]
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1557108076]
+color = Color(0.5493847, 0.6061697, 0.61428833, 1)
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=541473781]
+light_mask = 2
+visibility_layer = 2
 position = Vector2(-4, -5)
 script = ExtResource("16_jx0ln")
+
+[node name="Flashlight" type="Sprite2D" parent="CharacterBody2D" unique_id=67202910]
+z_index = 1
+material = SubResource("CanvasItemMaterial_s6imn")
+position = Vector2(497.99994, 78.00001)
+rotation = -0.14835298
+scale = Vector2(0.77131456, 0.5305143)
+texture = ExtResource("2_vviuh")
+
+[node name="PickupIcon" type="Sprite2D" parent="CharacterBody2D" unique_id=366174369]
+position = Vector2(-76, -166)
+scale = Vector2(0.64, 0.64)
+texture = ExtResource("151_tr5de")
 
 [node name="PickupArea" type="Area2D" parent="CharacterBody2D" unique_id=2044091958]
 
@@ -696,7 +720,7 @@ shape = SubResource("RectangleShape2D_2mi4e")
 
 [node name="Shadow" type="Sprite2D" parent="CharacterBody2D" unique_id=551414406]
 modulate = Color(1, 1, 1, 0.39607844)
-position = Vector2(4, 151.575)
+position = Vector2(4, 151.57498)
 scale = Vector2(9.455, 9.455)
 texture = ExtResource("2_i6hxo")
 
@@ -713,7 +737,7 @@ shape = SubResource("CircleShape2D_bwfjh")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=818990070]
 
 [node name="ECG_" type="AnimatedSprite2D" parent="CanvasLayer" unique_id=1309328822]
-position = Vector2(287, 147)
+position = Vector2(877, 148.00002)
 scale = Vector2(0.27, 0.27)
 sprite_frames = SubResource("SpriteFrames_qtq44")
 animation = &"ECG"
@@ -722,9 +746,10 @@ frame = 88
 frame_progress = 1.0
 speed_scale = 8.0
 
-[node name="Item_Area2D" type="Area2D" parent="." unique_id=2063933010 groups=["item"]]
+[node name="Item" type="Area2D" parent="." unique_id=2063933010 groups=["item"]]
+script = ExtResource("149_2mi4e")
 
-[node name="pickup" type="Sprite2D" parent="Item_Area2D" unique_id=1907352345]
+[node name="pickup" type="Sprite2D" parent="Item" unique_id=1907352345]
 position = Vector2(1119, 562)
 scale = Vector2(3.35, 3.35)
 texture = ExtResource("149_fdi8c")
@@ -732,8 +757,6 @@ offset = Vector2(0, 13.94)
 region_enabled = true
 region_rect = Rect2(153.4587, 46.346504, 32.712753, 50.13125)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Item_Area2D" unique_id=490204251]
-position = Vector2(1118.5, 607.5)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Item" unique_id=490204251]
+position = Vector2(1117, 608.5)
 shape = SubResource("RectangleShape2D_fdi8c")
-
-[connection signal="area_entered" from="CharacterBody2D/PickupArea" to="CharacterBody2D" method="_on_pickup_area_area_entered"]
