@@ -2,23 +2,51 @@
 
 [ext_resource type="Texture2D" uid="uid://d0gf58xfqvv6i" path="res://IDLE_Anim/phone_re.png" id="1_3rj5o"]
 [ext_resource type="Texture2D" uid="uid://b02pk0g8607gt" path="res://addons/memo.png" id="2_0e3g3"]
+[ext_resource type="Texture2D" uid="uid://dqnfst58x2j2d" path="res://click_load/load_00000.png" id="2_j06my"]
+[ext_resource type="Script" uid="uid://bbf8cvsqtxsxg" path="res://phone_background.gd" id="2_o8kak"]
 [ext_resource type="Texture2D" uid="uid://deqt72m8jq1c" path="res://addons/guide.png" id="3_0e3g3"]
+[ext_resource type="Texture2D" uid="uid://cp8q0vq3rr6to" path="res://click_load/load_00001.png" id="3_ast13"]
+[ext_resource type="Texture2D" uid="uid://6cfweq2rugid" path="res://click_load/load_00002.png" id="4_1g6qh"]
 [ext_resource type="Texture2D" uid="uid://c7wjg8ewvv123" path="res://addons/message.png" id="4_idgle"]
 [ext_resource type="Texture2D" uid="uid://7slb14luv757" path="res://addons/save.png" id="5_vuhsr"]
+[ext_resource type="Texture2D" uid="uid://dwkydoa0sell7" path="res://click_load/load_00003.png" id="5_xgb3p"]
+[ext_resource type="Texture2D" uid="uid://c52sdgc3bbtl0" path="res://click_load/load_00004.png" id="6_qxbm5"]
 [ext_resource type="Texture2D" uid="uid://cxyolghu6ibnq" path="res://addons/map.png" id="6_th6ti"]
 [ext_resource type="Texture2D" uid="uid://cfk7mjuwmem73" path="res://addons/load.png" id="7_vsimv"]
 [ext_resource type="Texture2D" uid="uid://ckw7i17k3lx3f" path="res://text_rere.png" id="8_vuhsr"]
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_34stg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_j06my")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_ast13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_1g6qh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_xgb3p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_qxbm5")
+}],
+"loop": false,
+"name": &"click_load",
+"speed": 5.0
+}]
+
 [node name="phone_ui" type="Node2D" unique_id=1222690220]
-position = Vector2(1288, 0)
+metadata/_edit_horizontal_guides_ = [745.0, 859.0]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=890815912]
 
 [node name="Control" type="Control" parent="CanvasLayer" unique_id=1023277098]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 1288.0
-offset_right = 1907.0
+offset_right = 619.0
 offset_bottom = 1084.0
 metadata/_edit_use_anchors_ = true
 
@@ -27,7 +55,19 @@ layout_mode = 0
 offset_right = 623.0
 offset_bottom = 1077.0
 texture = ExtResource("1_3rj5o")
+script = ExtResource("2_o8kak")
 metadata/_edit_use_anchors_ = true
+
+[node name="click_load" type="AnimatedSprite2D" parent="CanvasLayer/Control/PhoneBackground" unique_id=165519784]
+visible = false
+z_index = 1
+position = Vector2(359.945, 619.285)
+scale = Vector2(0.7, 0.7)
+sprite_frames = SubResource("SpriteFrames_34stg")
+animation = &"click_load"
+frame = 4
+frame_progress = 1.0
+speed_scale = 3.0
 
 [node name="memo" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=254209304]
 clip_contents = true
@@ -70,21 +110,24 @@ icon = ExtResource("6_th6ti")
 flat = true
 metadata/_edit_use_anchors_ = true
 
-[node name="load" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=1632425112]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.011000001
-anchor_right = -0.011000001
-offset_left = 6.8530006
-offset_right = 760.853
-offset_bottom = 1085.0
-icon = ExtResource("7_vsimv")
-flat = true
-metadata/_edit_use_anchors_ = true
-
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/PhoneBackground" unique_id=1546888494]
 layout_mode = 0
 offset_right = 623.0
 offset_bottom = 1077.0
 texture = ExtResource("8_vuhsr")
 metadata/_edit_use_anchors_ = true
+
+[node name="load" type="Button" parent="CanvasLayer/Control/PhoneBackground" unique_id=1632425112]
+layout_mode = 1
+anchors_preset = -1
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="icon" type="TextureRect" parent="CanvasLayer/Control/PhoneBackground/load" unique_id=1348952916]
+clip_contents = true
+layout_mode = 0
+offset_left = -1046.385
+offset_top = -604.65
+offset_right = -423.385
+offset_bottom = 472.34998
+texture = ExtResource("7_vsimv")
