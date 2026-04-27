@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://c2uw7rho0ha4w"]
+
+[ext_resource type="Script" uid="uid://c7saijjmnx02s" path="res://monster.gd" id="1_s53e4"]
+[ext_resource type="Texture2D" uid="uid://36sml5v6xif3" path="res://addons/dialogic/Resources/monster1/monster1_00000.png" id="2_tpp6e"]
+[ext_resource type="Texture2D" uid="uid://cfnvn4diat8m1" path="res://addons/dialogic/Resources/monster1/monster1_00001.png" id="3_ocebi"]
+[ext_resource type="Texture2D" uid="uid://fn55itnyqlgi" path="res://addons/dialogic/Resources/monster1/monster1_00002.png" id="4_u4bh7"]
+[ext_resource type="Texture2D" uid="uid://d11xvkabg228o" path="res://addons/dialogic/Resources/monster1/monster1_00003.png" id="5_wdu3u"]
+[ext_resource type="Texture2D" uid="uid://ds8md782nfuxo" path="res://addons/dialogic/Resources/monster1/monster1_00004.png" id="6_5105l"]
+[ext_resource type="Texture2D" uid="uid://eo5u6iv1lamp" path="res://addons/dialogic/Resources/monster1/monster1_00005.png" id="7_lqt3o"]
+[ext_resource type="Texture2D" uid="uid://c1hy288us55yp" path="res://addons/dialogic/Resources/monster1/monster1_00006.png" id="8_a7j2b"]
+[ext_resource type="Texture2D" uid="uid://dvtervdl8hqwu" path="res://addons/dialogic/Resources/monster1/monster1_00007.png" id="9_rorsi"]
+[ext_resource type="Texture2D" uid="uid://dlqyncpjtcb2x" path="res://addons/dialogic/Resources/monster1/monster1_00008.png" id="10_7qa85"]
+[ext_resource type="Texture2D" uid="uid://ddlyjbut8ys6t" path="res://addons/dialogic/Resources/monster1/monster1_00009.png" id="11_6py8i"]
+[ext_resource type="Texture2D" uid="uid://v3gdihdgtqcg" path="res://addons/dialogic/Resources/monster1/monster1_00010.png" id="12_u8wmr"]
+[ext_resource type="Texture2D" uid="uid://4w8a3dujy41p" path="res://addons/dialogic/Resources/monster1/monster1_00011.png" id="13_s0vvg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o122v"]
+size = Vector2(139, 113)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7mvib"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_tpp6e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_ocebi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_u4bh7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_wdu3u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_5105l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_lqt3o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_a7j2b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_rorsi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_7qa85")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_6py8i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_u8wmr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_s0vvg")
+}],
+"loop": true,
+"name": &"monster1",
+"speed": 5.0
+}]
+
+[node name="Node2D" type="Node2D" unique_id=95767362]
+
+[node name="Monster" type="CharacterBody2D" parent="." unique_id=1361999833]
+script = ExtResource("1_s53e4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Monster" unique_id=118892959]
+position = Vector2(98.5, 476.5)
+shape = SubResource("RectangleShape2D_o122v")
+
+[node name="Monster_1" type="AnimatedSprite2D" parent="Monster" unique_id=717526179]
+position = Vector2(93.00001, 475)
+scale = Vector2(0.883772, 0.883772)
+sprite_frames = SubResource("SpriteFrames_7mvib")
+animation = &"monster1"
+speed_scale = 3.125

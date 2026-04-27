@@ -126,8 +126,8 @@ metadata/_edit_use_anchors_ = true
 [node name="icon" type="TextureRect" parent="CanvasLayer/Control/PhoneBackground/load" unique_id=1348952916]
 clip_contents = true
 layout_mode = 0
-offset_left = -1046.385
-offset_top = -604.65
-offset_right = -423.385
-offset_bottom = 472.34998
+offset_left = 4.0
+offset_top = 5.0
+offset_right = 627.0
+offset_bottom = 1082.0
 texture = ExtResource("7_vsimv")

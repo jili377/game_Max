@@ -39,11 +39,12 @@ var last_direction = Vector2.DOWN
 
 
 func _ready():
+	add_to_group("player")   # ⭐ 关键：让怪物能找到你
+	
 	current_speed = speed
 	
 	pickup_icon.visible = false
 	
-	# 记录编辑器设置（防止运行错位）
 	icon_base_pos = pickup_icon.position
 	icon_base_scale = pickup_icon.scale
 	
@@ -105,11 +106,9 @@ func _physics_process(delta):
 
 	# ===== 拾取 =====
 	if Input.is_action_just_pressed("interact") and current_item:
-		print("拾取:", current_item)
 		current_item.pickup()
 
 
-# ===== 🎨 手绘抖动动画 =====
 func _process(delta):
 	if pickup_icon.visible:
 		icon_time += delta
@@ -125,7 +124,6 @@ func _process(delta):
 		pickup_icon.rotation = rot
 		pickup_icon.scale = icon_base_scale * s
 
-	# 🔦 手电筒（每帧更新）
 	update_flashlight(delta)
 	toggle_flashlight()
 
@@ -136,10 +134,8 @@ func update_flashlight(_delta):
 	if !flashlight_on:
 		return
 
-	# 👉 跟8方向（核心）
 	flashlight.rotation = last_direction.angle()
 
-	# ✨ 闪烁（轻微呼吸感）
 	var t = Time.get_ticks_msec() / 1000.0
 	var flicker = 1.0 + sin(t * 8.0) * 0.02
 
@@ -156,45 +152,14 @@ func toggle_flashlight():
 
 func _on_pickup_area_area_entered(area: Area2D) -> void:
 	current_item = area
-	
 	pickup_icon.visible = true
 	icon_time = 0.0
-	
-	if icon_tween:
-		icon_tween.kill()
-	
-	icon_tween = create_tween()
-	
-	pickup_icon.scale = icon_base_scale * 0.3
-	pickup_icon.modulate.a = 0.0
-	
-	icon_tween.tween_property(pickup_icon, "scale", icon_base_scale * 1.4, 0.12)\
-		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	
-	icon_tween.tween_property(pickup_icon, "scale", icon_base_scale * 0.9, 0.10)
-	icon_tween.tween_property(pickup_icon, "scale", icon_base_scale, 0.08)
-	
-	icon_tween.parallel().tween_property(pickup_icon, "modulate:a", 1.0, 0.15)
 
 
 func _on_pickup_area_area_exited(area: Area2D) -> void:
 	if area == current_item:
 		current_item = null
-		
-		if icon_tween:
-			icon_tween.kill()
-		
-		icon_tween = create_tween()
-		
-		icon_tween.tween_property(pickup_icon, "scale", icon_base_scale * 0.2, 0.12)\
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-		
-		icon_tween.parallel().tween_property(pickup_icon, "modulate:a", 0.0, 0.1)
-		
-		icon_tween.tween_callback(func():
-			pickup_icon.visible = false
-			pickup_icon.scale = icon_base_scale
-		)
+		pickup_icon.visible = false
 
 
 # ===== 动画系统 =====
